@@ -1,0 +1,33 @@
+# Copy to ~/.config/dms-profiler/config.toml
+#
+# Each [[rules]] block is either:
+#   - match = "one prefix" + profile = "…"
+#   - matches = [ "prefix1", "prefix2", … ] + profile = "…"   (same profile, many URLs)
+
+[browser]
+command = "google-chrome-stable"
+user_data_dir = "~/.config/google-chrome"
+
+[[rules]]
+profile = "Work"
+matches = [
+    "https://app.slack.com",
+    "https://slack.com",
+    "https://api.slack.com",
+    "https://files.slack.com",
+]
+
+[[rules]]
+profile = "Personal"
+matches = [
+    "https://github.com",
+    "https://gist.github.com",
+    "https://raw.githubusercontent.com",
+]
+
+[[rules]]
+match = "https://"
+profile = "Personal"
+
+[default]
+profile = "Default"

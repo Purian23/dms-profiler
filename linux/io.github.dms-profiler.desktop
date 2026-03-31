@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=DMS Profiler
+Comment=Route HTTP(S) links to Chrome profiles
+Exec=dms-profiler %u
+Terminal=false
+Categories=Network;WebBrowser;
+MimeType=x-scheme-handler/http;x-scheme-handler/https;

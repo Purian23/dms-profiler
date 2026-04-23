@@ -107,12 +107,5 @@ func ExpandPath(s string) (string, error) {
 		}
 		return filepath.Join(home, s[2:]), nil
 	}
-	if strings.HasPrefix(s, "~") {
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return "", err
-		}
-		return filepath.Join(home, s[1:]), nil
-	}
 	return filepath.Clean(s), nil
 }

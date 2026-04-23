@@ -2,23 +2,32 @@
 
 Linux Chrome Profile: when set as the default browser, it opens **Google Chrome Stable** URLs in the right **profile** using `--profile-directory`, driven by a TOML config.
 
-## Build
+## Install
 
 ```bash
-go build -o dms-profiler ./cmd/dms-profiler
+make install
 ```
 
-Install the binary somewhere on `PATH`, for example:
+This single command builds the binary, installs it to `/usr/local/bin/` (requires sudo), copies the desktop entry to `~/.local/share/applications/`, creates `~/.config/dms-profiler/config.toml` from the example on first install (never overwrites an existing config), and registers dms-profiler as the default handler for `http://` and `https://`. Existing desktop entry files are backed up as `.bak` before being replaced.
+
+To install to a different path:
 
 ```bash
-sudo install -m 0755 dms-profiler /usr/local/bin/
+make install INSTALL_BIN=~/.local/bin/dms-profiler
 ```
 
 ## Configure
 
+Edit `~/.config/dms-profiler/config.toml` after the first install. Profile names must match what Chrome shows. To list your profiles:
+
 ```bash
-mkdir -p ~/.config/dms-profiler
-cp config.example.toml ~/.config/dms-profiler/config.toml
+python3 -c "
+import json, os
+with open(os.path.expanduser('~/.config/google-chrome/Local State')) as f:
+    data = json.load(f)
+for folder, info in sorted(data['profile']['info_cache'].items()):
+    print(f'{folder:20} -> {info[\"name\"]}')
+"
 ```
 
 Each `[[rules]]` entry uses either:
@@ -33,21 +42,21 @@ Profile values:
 - **Folder names** (`Default`, `Profile 1`, …) are used as-is.
 - **Names shown in Chrome** (`Work`, `Personal`, …) are resolved from `Local State` under `user_data_dir`.
 
-## Desktop integration
+## Re-registering the handler
 
-Install the desktop entry and point it at your binary path (edit `Exec=` if needed):
-
-```bash
-cp linux/io.github.dms-profiler.desktop ~/.local/share/applications/
-# Set Exec=/full/path/to/dms-profiler %u if the binary is not on PATH
-```
-
-Register as the default handler for HTTP and HTTPS:
+Fedora/GNOME updates or Chrome's "set as default browser" prompt can reset the MIME handler. Fix it with:
 
 ```bash
-xdg-mime default io.github.dms-profiler.desktop x-scheme-handler/http
-xdg-mime default io.github.dms-profiler.desktop x-scheme-handler/https
+make register-handler
 ```
+
+## Uninstall
+
+```bash
+make uninstall
+```
+
+Removes the binary and desktop entry and clears the MIME associations. Your config at `~/.config/dms-profiler/` is **not** removed.
 
 ## CLI
 

@@ -36,6 +36,10 @@ func run() int {
 		fmt.Fprintln(os.Stderr, "empty URL")
 		return 2
 	}
+	if !strings.HasPrefix(rawURL, "http://") && !strings.HasPrefix(rawURL, "https://") {
+		fmt.Fprintf(os.Stderr, "unsupported URL scheme: %q\n", rawURL)
+		return 2
+	}
 
 	cfg, err := config.Load(*cfgPath)
 	if err != nil {
